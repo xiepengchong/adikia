@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/start_hook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start hook" />
+
+    <Button
+        android:id="@+id/stop_hook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STOP HOOK" />
+
+    <Button
+        android:id="@+id/origin_method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CALL ORIGIN"
+/>
+
+    <Button
+        android:id="@+id/call_print"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="call origin print" />
+</LinearLayout>
