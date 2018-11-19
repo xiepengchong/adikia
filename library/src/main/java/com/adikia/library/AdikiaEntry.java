@@ -34,7 +34,8 @@ class AdikiaEntry {
             if (AdikiaConfig.DEBUG) {
                 Log.v(TAG, "hook caller");
             }
-            backupMethodPtr = hook(srcMethod, destMethod, backupMethod);
+            long bak = hook(srcMethod, destMethod, backupMethod);
+            backupMethodPtr = bak;
         }
     }
 
@@ -52,13 +53,11 @@ class AdikiaEntry {
 
         Object result = null;
         if (backupMethodPtr != 0) {
-            restore();
             Object[] argsModified = callback.beforeInvokeMethod(receiver, args);
             if ((result = callback.invokeMethod(receiver, argsModified)) == null) {
-                result = callOriginMethod(receiver, argsModified);
+                result = backupMethod.invoke(receiver,argsModified);
             }
             result = callback.afterInvokeMethod(receiver, args, result);
-            hook();
         } else {
             result = callOriginMethod(receiver, args);
         }
@@ -72,18 +71,22 @@ class AdikiaEntry {
         }
         Class returnClz = srcMethod.getReturnType();
         if (AdikiaConfig.DEBUG) {
-            Log.v(TAG, "callOriginMethod returnClz.getName()=" + returnClz.getName());
+            Log.v(TAG, "callOriginMethod returnClz.getName()=" + returnClz.getName()+" srcMethod="+srcMethod);
         }
         if (returnClz != null && "void".equalsIgnoreCase(returnClz.getName())) {
             srcMethod.invoke(receiver, args);
             return null;
         }
+
+
         return srcMethod.invoke(receiver, args);
     }
 
     private static native long hook(Method src, Method dest, Method backup);
 
     private static native Method restore(Method src, long backup);
+
+    public static native void init(Class cls,String name,String sig,boolean istatic);
 
     public static void m1() {
     }

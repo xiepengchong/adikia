@@ -6,8 +6,6 @@ public abstract class AdikiaCallback {
 
     private final static String TAG = "Adikia.Callback";
 
-    private Object[] args = new Object[0];
-
     public Object invokeMethod(Object receiver,Object ... args){
         if(AdikiaConfig.DEBUG){
             Log.v(TAG,"invokeMethod");

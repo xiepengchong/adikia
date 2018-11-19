@@ -11,25 +11,45 @@ static struct {
     jmethodID m2;
     size_t methodSize;
 } MethodStruct;
+static int access=3;
 
 
-static long hook(JNIEnv *env, jclass type, jobject srcMethodObj, jobject destMethodObj, jobject backupMethodObj) {
-    void* srcMethod = reinterpret_cast<void*>(env -> FromReflectedMethod(srcMethodObj));
-    void* destMethod = reinterpret_cast<void*>(env -> FromReflectedMethod(destMethodObj));
-    void* backupMethod = reinterpret_cast<void*>(env -> FromReflectedMethod(backupMethodObj));
-    memcpy(backupMethod, srcMethod, MethodStruct.methodSize);
-    memcpy(srcMethod, destMethod, MethodStruct.methodSize);
-    return reinterpret_cast<long>(backupMethod);
+static long hook(JNIEnv *env, jclass type, jobject srcMethodObj, jobject destMethodObj,
+                 jobject backupMethodObj) {
+    void *mSrc = (void *) env->FromReflectedMethod(srcMethodObj);
+    void *mNew_ = (void *) env->FromReflectedMethod(destMethodObj);
+    size_t *mInvoker = (size_t *) env->FromReflectedMethod(backupMethodObj);
+    memcpy(mInvoker, mSrc, MethodStruct.methodSize);
+    *(mInvoker + access) = *(mInvoker + access) | 0x0002;
+    memcpy(mSrc, mNew_, MethodStruct.methodSize);
+    return (size_t) mInvoker;
 }
 
 
 static jobject restore(JNIEnv *env, jclass type, jobject srcMethod, jlong methodPtr) {
     int* backupMethod = reinterpret_cast<int*>(methodPtr);
-    void* artMethodSrc = reinterpret_cast<void*>(env -> FromReflectedMethod(srcMethod));
+    size_t* artMethodSrc = reinterpret_cast<size_t*>(env -> FromReflectedMethod(srcMethod));
     memcpy(artMethodSrc, backupMethod, MethodStruct.methodSize);
+    *(artMethodSrc+access)=*(artMethodSrc+access)|0x0002;
+
     return srcMethod;
 }
 
+static void init(JNIEnv* env, jclass clazz, jclass cls,jstring name,jstring sig, jboolean isstatic) {
+    jmethodID m;
+    const char* name_=env->GetStringUTFChars(name,0);;
+    const char* sig_=env->GetStringUTFChars(sig,0);
+    if(isstatic) {
+        m=env->GetStaticMethodID(cls, name_, sig_);
+    } else{
+        m=env->GetMethodID(cls, name_, sig_);
+    }
+
+    if(env->ExceptionCheck()){
+        env->ExceptionClear();
+    }
+    return;
+}
 
 static JNINativeMethod gMethods[] = {
         {
@@ -41,6 +61,11 @@ static JNINativeMethod gMethods[] = {
                 "restore",
                 "(Ljava/lang/reflect/Method;J)Ljava/lang/reflect/Method;",
                 (void*)restore
+        },
+        {
+                "init",
+                "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Z)V",
+                (void*)init
         }
 };
 
