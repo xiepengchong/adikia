@@ -76,7 +76,7 @@ class AdikiaEntry {
                     result = backupMethod.invoke(receiver,argsModified);
                 }
             }
-            result = callback.afterInvokeMethod(receiver, args, result);
+            result = callback.afterInvokeMethod(receiver, result,args);
         } else {
             result = callOriginMethod(receiver, args);
         }
