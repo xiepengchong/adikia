@@ -100,8 +100,7 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_FALSE;
     }
     jclass classEvaluateUtil = env->FindClass(ADIKIA_INIT_JAVA);
-    if (env->RegisterNatives(classEvaluateUtil, gMethods, sizeof(gMethods) / sizeof(gMethods[0])) <
-        0) {
+    if (env->RegisterNatives(classEvaluateUtil, gMethods, sizeof(gMethods) / sizeof(gMethods[0])) < 0) {
         return JNI_FALSE;
     }
 

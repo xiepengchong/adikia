@@ -2,6 +2,7 @@ package com.adikia.library.dm;
 
 import android.content.Context;
 
+import com.adikia.library.AdikiaConfig;
 import com.android.dx.Code;
 import com.android.dx.DexMaker;
 import com.android.dx.Local;
@@ -23,7 +24,7 @@ public class BackupMaker extends Maker{
         for (int i = 0; i < pTypes.length; ++i) {
             params[i ] = getTypeIdFromClass(pTypes[i]);
         }
-        String cName = "L"+m.getDeclaringClass().getName().replace(".","/")+"_hkb;";
+        String cName = "L"+m.getDeclaringClass().getName().replace(".","/")+ AdikiaConfig.BACKUP_SUFFIX +";";
         TypeId<?> backup = TypeId.get(cName);
 
         dexMaker.declare(backup, cName, m.getDeclaringClass().getModifiers(),superType);

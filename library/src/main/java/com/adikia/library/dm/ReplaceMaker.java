@@ -2,6 +2,7 @@ package com.adikia.library.dm;
 
 import android.content.Context;
 
+import com.adikia.library.AdikiaConfig;
 import com.android.dx.Code;
 import com.android.dx.DexMaker;
 import com.android.dx.Local;
@@ -15,7 +16,7 @@ import java.lang.reflect.Method;
 public class ReplaceMaker extends Maker{
 
     public DexMaker maker(DexMaker maker,Method m) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String cName = "L"+m.getDeclaringClass().getName().replace(".","/")+"_hkr;";
+        String cName = "L"+m.getDeclaringClass().getName().replace(".","/")+ AdikiaConfig.REPLACE_SUFFIX +";";
 
         TypeId<?> backup = TypeId.get(cName);
         TypeId<?> superType = TypeId.get( m.getDeclaringClass().getSuperclass());

@@ -1,6 +1,7 @@
 package com.adikia.library;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Pair;
 
 import com.adikia.library.dm.BackupMaker;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AdikiaManager {
+
+    private final String TAG = "Adikia.Manager";
     private static final Map<Class<?>, String> PRIMITIVE_TO_SIGNATURE;
     static {
         PRIMITIVE_TO_SIGNATURE = new HashMap<Class<?>, String>(9);
@@ -70,8 +73,13 @@ public class AdikiaManager {
     }
 
     public void addHook(Method originMethod,AdikiaCallback callback){
+        if(originMethod.getDeclaringClass().getName().endsWith(AdikiaConfig.REPLACE_SUFFIX)){
+            Log.e(TAG,"this method is hooked method,ignore");
+            return;
+        }
         Pair<String, String> key = Pair.create(originMethod.getDeclaringClass().getName(), originMethod.getName());
-        mHookTracker.put(key,new AdikiaTracker(originMethod,callback));
+        mHookTracker.put(key, new AdikiaTracker(originMethod, callback));
+
     }
 
     public void startHook(Context context){
@@ -147,8 +155,8 @@ public class AdikiaManager {
         }
         Pair<String, String> key = Pair.create(hookMethod.getDeclaringClass().getName(), hookMethod.getName());
         if (mHookMap.containsKey(key)) {
-            AdikiaEntry mh = mHookMap.get(key);
-            mh.restore();
+            Log.v(TAG,"hooked return");
+            return;
         }
         AdikiaEntry methodHook = new AdikiaEntry(originMethod, hookMethod, backMethod,callback);
         mHookMap.put(key, methodHook);
