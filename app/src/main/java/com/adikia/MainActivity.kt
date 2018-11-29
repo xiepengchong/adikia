@@ -18,15 +18,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             AdikiaManager.get().addHook(src,object : AdikiaCallback() {
 
                 override fun beforeInvokeMethod(receiver: Any?, vararg args: Any?): Array<out Any?>? {
-                    return super.beforeInvokeMethod(receiver, "修改后的输入参数")
+                    return super.beforeInvokeMethod(receiver,arrayOf<Any>("修改之后的输入值"))
                 }
 
                 override fun afterInvokeMethod(receiver: Any?, result: Any?, vararg args: Any?): Any? {
-                    return super.afterInvokeMethod(receiver, "修改之后的返回值")
+                    return "修改之后的返回值"
                 }
 
                 override fun invokeMethod(receiver: Any?, vararg args: Any?): Any? {
-                    return super.invokeMethod(receiver, *args)
+                    return super.invokeMethod(receiver, args)
                 }
 
             })

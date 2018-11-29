@@ -6,14 +6,14 @@ public abstract class AdikiaCallback {
 
     private final static String TAG = "Adikia.Callback";
 
-    public Object invokeMethod(Object receiver,Object ... args){
+    public Object invokeMethod(Object receiver,Object[] args){
         if(AdikiaConfig.DEBUG){
             Log.v(TAG,"invokeMethod");
         }
         return null;
     }
 
-    public Object[] beforeInvokeMethod(Object receiver,Object ... args){
+    public Object[] beforeInvokeMethod(Object receiver,Object[] args){
         if(AdikiaConfig.DEBUG){
             Log.v(TAG,"beforeInvokeMethod");
         }

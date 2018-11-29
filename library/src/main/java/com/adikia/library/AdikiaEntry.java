@@ -49,13 +49,32 @@ class AdikiaEntry {
         }
     }
 
-    public Object callOrigin(Object receiver, Object... args) throws InvocationTargetException, IllegalAccessException {
+    public Object[] convert(Object[] args){
+        int size = args.length;
+        Object[] obj = new Object[size];
+        for(int i=0;i<size;i++){
+            obj[i] = args[i];
+        }
+        return obj;
+    }
+
+
+
+    public Object callOrigin(Object receiver, Object args) throws InvocationTargetException, IllegalAccessException {
 
         Object result = null;
         if (backupMethodPtr != 0) {
-            Object[] argsModified = callback.beforeInvokeMethod(receiver, args);
+            Object[] argsModified = callback.beforeInvokeMethod(receiver, (Object[]) args);
             if ((result = callback.invokeMethod(receiver, argsModified)) == null) {
-                result = backupMethod.invoke(receiver,argsModified);
+                if(backupMethod.getParameterTypes().length != argsModified.length){
+                    if (AdikiaConfig.DEBUG) {
+                        Log.e(TAG, "input params size wrong");
+                        Object[] argsError = convert((Object[]) args);
+                        result = backupMethod.invoke(receiver,argsError);
+                    }
+                } else {
+                    result = backupMethod.invoke(receiver,argsModified);
+                }
             }
             result = callback.afterInvokeMethod(receiver, args, result);
         } else {
